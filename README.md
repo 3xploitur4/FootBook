@@ -83,6 +83,10 @@ FootBook lets players search for available pitches, book a time slot, and receiv
 - **Reliability:** each QR code is single-use
 - **Portability:** runs in any browser, no installation needed
 
+- ## Conception
+- Maquettes et diagramme de classes (Figma) : https://www.figma.com/design/hEv9ifxAFM3uYmsss0s1zu
+- Fichiers de conception dans `docs/conception/`
+
 ##  Getting Started
 
 ```bash
