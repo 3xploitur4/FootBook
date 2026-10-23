@@ -1,0 +1,6 @@
+<div class="mb-3{% if classe %} {{ classe }}{% endif %}">
+  <label for="{{ champ.id_for_label }}">{{ champ.label }}</label>
+  {% if champ.field.widget.input_type == 'radio' %}<div class="radios">{{ champ }}</div>{% else %}{{ champ }}{% endif %}
+  {% if champ.help_text %}<div class="aide">{{ champ.help_text|safe }}</div>{% endif %}
+  {% for erreur in champ.errors %}<div class="erreur">{{ erreur }}</div>{% endfor %}
+</div>

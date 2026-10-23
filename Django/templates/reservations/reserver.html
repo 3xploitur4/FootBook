@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titre %}Réserver un créneau{% endblock %}
+{% block contenu %}
+<div class="etroit">
+  <h1>Réserver un créneau</h1>
+  <div class="carte mb-3">
+    <strong class="fs-5">{{ terrain.nom }}</strong>
+    <div class="my-1"><span class="tag">{{ terrain.get_categorie_display }}</span><span class="tag">{{ terrain.get_zone_display }}</span></div>
+    <div class="petit">{{ terrain.adresse }}</div>
+    <div class="prix">{{ terrain.prix|floatformat:"-2" }} DH / h</div>
+  </div>
+
+  <form method="get" class="mb-3" id="choix-date">
+    <label for="date">Date</label>
+    <select id="date" name="date" onchange="this.form.submit()">
+      {% for d in dates %}<option value="{{ d|date:'Y-m-d' }}"{% if d == jour %} selected{% endif %}>{{ d|date:"l j F" }}</option>{% endfor %}
+    </select>
+    <noscript><button type="submit" class="btn btn-fb-contour mt-2">Voir les créneaux</button></noscript>
+    <div class="aide mt-1">D'aujourd'hui à J+14.</div>
+  </form>
+
+  <form method="post" novalidate>{% csrf_token %}
+    <input type="hidden" name="date" value="{{ jour|date:'Y-m-d' }}">
+    {% for e in form.non_field_errors %}<div class="ko-boite mb-3" role="alert">{{ e }}</div>{% endfor %}
+    {% for e in form.date.errors %}<div class="erreur mb-2">{{ e }}</div>{% endfor %}
+    <fieldset class="mb-3">
+      <legend class="fs-6 fw-semibold">Créneaux libres (1 h)</legend>
+      {% if creneaux %}
+        <div class="creneaux">
+          {% for h in creneaux %}
+            <div><input type="radio" name="heure" id="h{{ forloop.counter }}" value="{{ h|time:'H:i' }}"{% if form.heure.value == h|time:'H:i' %} checked{% endif %} required>
+            <label for="h{{ forloop.counter }}">{{ h|time:"H:i" }}</label></div>
+          {% endfor %}
+        </div>
+        <div class="aide mt-2">Les créneaux déjà réservés n'apparaissent pas.</div>
+      {% else %}
+        <p class="petit">Plus aucun créneau libre ce jour-là. Choisissez une autre date.</p>
+      {% endif %}
+      {% for e in form.heure.errors %}<div class="erreur">{{ e }}</div>{% endfor %}
+    </fieldset>
+    <button type="submit" class="btn btn-fb w-100 mb-2"{% if not creneaux %} disabled{% endif %}>Confirmer la réservation</button>
+    <a class="btn btn-fb-contour w-100" href="{% url 'terrains' %}">Annuler</a>
+  </form>
+</div>
+{% endblock %}

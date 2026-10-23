@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titre %}{% if object %}Modifier un terrain{% else %}Ajouter un terrain{% endif %}{% endblock %}
+{% block contenu %}
+<div class="carte etroit p-4">
+  <h1>{% if object %}Modifier un terrain{% else %}Ajouter un terrain{% endif %}</h1>
+  <form method="post" novalidate>{% csrf_token %}
+    {% for e in form.non_field_errors %}<div class="erreur mb-2">{{ e }}</div>{% endfor %}
+    {% include "_champ.html" with champ=form.nom %}
+    <div class="row">
+      {% include "_champ.html" with champ=form.categorie classe="col-sm-6" %}
+      {% include "_champ.html" with champ=form.zone classe="col-sm-6" %}
+    </div>
+    <div class="row">
+      {% include "_champ.html" with champ=form.prix classe="col-sm-6" %}
+      {% include "_champ.html" with champ=form.adresse classe="col-sm-6" %}
+    </div>
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-fb px-4">Enregistrer</button>
+      <a class="btn btn-fb-contour px-4" href="{% url 'mes_terrains' %}">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

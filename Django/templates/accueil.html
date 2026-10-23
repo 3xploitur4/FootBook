@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titre %}Accueil{% endblock %}
+{% block contenu %}
+<section class="hero rounded-3 p-4 p-md-5 mb-4">
+  <h1 class="display-6 fw-bold">Réservez un terrain de foot, complétez votre équipe</h1>
+  <p class="lead">FootBook met en relation les joueurs amateurs et les propriétaires de terrains.</p>
+  {% if user.is_authenticated %}
+    <a class="btn btn-fb px-4" href="{% url 'espace' %}">Mon espace</a>
+  {% else %}
+    <a class="btn btn-fb px-4 me-2" href="{% url 'inscription' %}">Créer un compte</a>
+    <a class="btn btn-fb-contour px-4" href="{% url 'connexion' %}">Se connecter</a>
+  {% endif %}
+</section>
+<div class="row g-3">
+  <div class="col-md-6"><div class="carte"><h2 class="h5 fw-bold">Pour les joueurs</h2><p class="petit mb-0">Cherchez un terrain par catégorie, zone et prix.</p></div></div>
+  <div class="col-md-6"><div class="carte"><h2 class="h5 fw-bold">Pour les propriétaires</h2><p class="petit mb-0">Publiez et gérez vos terrains.</p></div></div>
+</div>
+{% endblock %}

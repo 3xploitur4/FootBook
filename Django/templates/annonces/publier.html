@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titre %}Publier une annonce{% endblock %}
+{% block contenu %}
+<div class="carte etroit p-4">
+  <h1>Publier une annonce</h1>
+  <p class="petit">Pour compléter votre équipe sur ce match.</p>
+  <div class="carte mb-3">
+    <strong>{{ reservation.terrain.nom }}</strong>
+    <div class="my-1"><span class="tag">{{ reservation.terrain.get_categorie_display }}</span><span class="tag">{{ reservation.terrain.get_zone_display }}</span></div>
+    <div>{{ reservation.date|date:"l j F" }} · {{ reservation.heure|time:"H:i" }} – {{ reservation.heure_fin|time:"H:i" }}</div>
+  </div>
+  <form method="post" novalidate>{% csrf_token %}
+    {% include "_champ.html" with champ=form.joueurs_manquants %}
+    {% include "_champ.html" with champ=form.description %}
+    <button type="submit" class="btn btn-fb w-100 mb-2">Publier l'annonce</button>
+    <a class="btn btn-fb-contour w-100" href="{% url 'mes_reservations' %}">Annuler</a>
+  </form>
+  <p class="petit mt-3 mb-0">Une seule annonce par réservation. Elle se ferme quand il ne manque plus personne.</p>
+</div>
+{% endblock %}

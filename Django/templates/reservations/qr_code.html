@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titre %}QR code{% endblock %}
+{% block contenu %}
+<div class="etroit">
+  <h1>Votre QR code</h1>
+  <div class="carte text-center mb-3">
+    <div class="qr" role="img" aria-label="QR code de la réservation">{{ qr }}</div>
+    <div class="petit">Présentez ce code au propriétaire à votre arrivée.</div>
+  </div>
+  <div class="carte mb-3">
+    <div class="petit mb-2">Si le scan ne marche pas, donnez ce code :</div>
+    <div class="code-texte">{{ reservation.code }}</div>
+  </div>
+  <div class="carte mb-3">
+    <strong>{{ reservation.terrain.nom }}</strong>
+    <div class="my-1"><span class="tag">{{ reservation.terrain.get_categorie_display }}</span><span class="tag">{{ reservation.terrain.get_zone_display }}</span></div>
+    <div>{{ reservation.date|date:"l j F" }} · {{ reservation.heure|time:"H:i" }} – {{ reservation.heure_fin|time:"H:i" }}</div>
+    <div class="mt-1"><span class="statut statut-{{ reservation.statut }}">{{ reservation.get_statut_display }}</span></div>
+  </div>
+  {% if reservation.statut == "CONFIRMEE" and reservation.est_a_venir and not reservation.annonce %}
+    <a class="btn btn-fb w-100 mb-2" href="{% url 'publier_annonce' reservation.pk %}">Publier une annonce pour ce match</a>
+  {% endif %}
+  <a class="btn btn-fb-contour w-100" href="{% url 'mes_reservations' %}">Mes réservations</a>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titre %}Terrains{% endblock %}
+{% block contenu %}
+<h1>Terrains</h1>
+{# Filtres en GET : la recherche se partage et le bouton retour fonctionne (SCRUM-51). #}
+<form method="get" class="carte mb-3" novalidate>
+  {% for e in form.non_field_errors %}<div class="erreur mb-2" role="alert">{{ e }}</div>{% endfor %}
+  <div class="row g-3 align-items-end">
+    {% include "_champ.html" with champ=form.categorie classe="col-md-3 col-sm-6 mb-0" %}
+    {% include "_champ.html" with champ=form.zone classe="col-md-3 col-sm-6 mb-0" %}
+    {% include "_champ.html" with champ=form.prix_min classe="col-md-2 col-sm-6 mb-0" %}
+    {% include "_champ.html" with champ=form.prix_max classe="col-md-2 col-sm-6 mb-0" %}
+    <div class="col-md-2 d-flex gap-2">
+      <button type="submit" class="btn btn-fb flex-fill">Filtrer</button>
+      <a class="btn btn-fb-contour flex-fill" href="{% url 'terrains' %}">Réinitialiser</a>
+    </div>
+  </div>
+</form>
+<p class="petit">{{ terrains|length }} terrain{{ terrains|length|pluralize }}</p>
+<div class="row g-3">
+  {% for terrain in terrains %}
+    <div class="col-lg-4 col-md-6">
+      <div class="carte h-100 d-flex flex-column gap-2">
+        <strong class="fs-5">{{ terrain.nom }}</strong>
+        <div><span class="tag">{{ terrain.get_categorie_display }}</span><span class="tag">{{ terrain.get_zone_display }}</span></div>
+        <div class="petit">{{ terrain.adresse }}</div>
+        <div class="prix">{{ terrain.prix|floatformat:"-2" }} DH / h</div>
+        <a class="btn btn-fb mt-auto" href="{% url 'reserver' terrain.pk %}">Réserver</a>
+      </div>
+    </div>
+  {% empty %}
+    <p>Aucun terrain trouvé.</p>
+  {% endfor %}
+</div>
+{% endblock %}

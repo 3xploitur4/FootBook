@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titre %}Valider un QR code{% endblock %}
+{% block contenu %}
+<div class="etroit">
+  <h1>Valider un QR code</h1>
+  {# La caméra du navigateur n'est accessible qu'en HTTPS ou sur localhost (SCRUM-36). #}
+  <div class="camera mb-3" id="lecteur"></div>
+  <p class="petit" id="info-camera">Visez le QR code du joueur.</p>
+  <form method="post" id="form-validation" class="d-flex gap-2 align-items-end mb-3" novalidate>{% csrf_token %}
+    <div class="flex-fill">
+      <label for="{{ form.code.id_for_label }}">{{ form.code.label }}</label>
+      {{ form.code }}
+    </div>
+    <button type="submit" class="btn btn-fb px-4">Valider</button>
+  </form>
+  {% if succes %}
+    <div class="ok-boite" role="status">
+      <strong class="fs-5" style="color:var(--vert-fonce)">✓ Réservation validée</strong>
+      <div>{{ reservation.joueur.nom_affiche }}</div>
+      <div>{{ reservation.terrain.nom }} · {{ reservation.date|date:"j/m" }} · {{ reservation.heure|time:"H:i" }} – {{ reservation.heure_fin|time:"H:i" }}</div>
+      <div class="petit">Validée à {{ reservation.valide_le|time:"H:i" }}. Un second scan de ce code sera refusé.</div>
+    </div>
+  {% elif erreur %}
+    <div class="ko-boite" role="alert">
+      <strong class="fs-5" style="color:#7d1f17">✕ {{ erreur }}</strong>
+      {% if reservation %}<div>{{ reservation.joueur.nom_affiche }} · {{ reservation.terrain.nom }} · {{ reservation.heure|time:"H:i" }}</div>{% endif %}
+      <div class="petit">Rien n'a été modifié.</div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+(function () {
+  var info = document.getElementById("info-camera");
+  if (typeof Html5Qrcode === "undefined") { info.textContent = "Caméra indisponible : saisissez le code à la main."; return; }
+  var lecteur = new Html5Qrcode("lecteur");
+  var envoye = false;
+  lecteur.start({ facingMode: "environment" }, { fps: 10, qrbox: 200 }, function (texte) {
+    if (envoye) return;
+    envoye = true;
+    document.getElementById("id_code").value = texte.trim();
+    lecteur.stop().finally(function () { document.getElementById("form-validation").submit(); });
+  }).catch(function () {
+    info.textContent = "Caméra indisponible : saisissez le code à la main.";  // cas V5 (SCRUM-55)
+  });
+})();
+</script>
+{% endblock %}

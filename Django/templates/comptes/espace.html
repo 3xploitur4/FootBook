@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titre %}Mon espace{% endblock %}
+{% block contenu %}
+<h1>Mon espace</h1>
+<p>Bonjour, {{ user.first_name|default:user.username }}. Que voulez-vous faire ?</p>
+{% if user.est_joueur %}
+  {# Compteur de matchs joués (US-09, SCRUM-41) #}
+  <div class="carte d-flex justify-content-between align-items-center mb-3" style="border:2px solid var(--vert)">
+    <div><strong>Matchs joués</strong><div class="petit">Comptés à chaque QR code validé</div></div>
+    <div class="compteur">{{ user.matchs_joues }}</div>
+  </div>
+  <div class="row g-3">
+    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'terrains' %}"><strong>Terrains</strong><div class="petit">Chercher un terrain.</div></a></div>
+    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'mes_reservations' %}"><strong>Mes réservations</strong><div class="petit">Voir mes réservations et mes QR codes.</div></a></div>
+    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'annonces' %}"><strong>Annonces</strong><div class="petit">Voir les annonces ouvertes.</div></a></div>
+    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'profil_joueur' user.pk %}"><strong>Mon profil</strong><div class="petit">Ce que les autres joueurs voient de moi.</div></a></div>
+  </div>
+{% else %}
+  <div class="row g-3">
+    <div class="col-md-4"><a class="carte h-100" href="{% url 'mes_terrains' %}"><strong>Mes terrains</strong><div class="petit">Ajouter ou modifier mes terrains.</div></a></div>
+    <div class="col-md-4"><a class="carte h-100" href="{% url 'reservations_recues' %}"><strong>Réservations reçues</strong><div class="petit">Voir les réservations de mes terrains.</div></a></div>
+    <div class="col-md-4"><a class="carte h-100" href="{% url 'valider_qr' %}"><strong>Valider un QR code</strong><div class="petit">Contrôler un justificatif.</div></a></div>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titre %}Connexion{% endblock %}
+{% block contenu %}
+<div class="carte etroit p-4">
+  <h1>Connexion</h1>
+  <form method="post" novalidate>{% csrf_token %}
+    {% for e in form.non_field_errors %}<div class="erreur mb-2">{{ e }}</div>{% endfor %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% include "_champ.html" with champ=form.username %}
+    {% include "_champ.html" with champ=form.password %}
+    <button type="submit" class="btn btn-fb w-100">Se connecter</button>
+  </form>
+  <p class="mt-3 mb-0">Pas de compte ? <a href="{% url 'inscription' %}">S'inscrire</a></p>
+</div>
+{% endblock %}

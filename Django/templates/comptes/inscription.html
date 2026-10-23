@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titre %}Créer un compte{% endblock %}
+{% block contenu %}
+<div class="carte etroit p-4">
+  <h1>Créer un compte</h1>
+  <form method="post" novalidate>{% csrf_token %}
+    {% for e in form.non_field_errors %}<div class="erreur mb-2">{{ e }}</div>{% endfor %}
+    {% include "_champ.html" with champ=form.username %}
+    <div class="row">
+      {% include "_champ.html" with champ=form.first_name classe="col-sm-6" %}
+      {% include "_champ.html" with champ=form.last_name classe="col-sm-6" %}
+    </div>
+    {% include "_champ.html" with champ=form.email %}
+    <div class="row">
+      {% include "_champ.html" with champ=form.password1 classe="col-sm-6" %}
+      {% include "_champ.html" with champ=form.password2 classe="col-sm-6" %}
+    </div>
+    {% include "_champ.html" with champ=form.role %}
+    <button type="submit" class="btn btn-fb w-100">S'inscrire</button>
+  </form>
+  <p class="mt-3 mb-0">Déjà un compte ? <a href="{% url 'connexion' %}">Se connecter</a></p>
+</div>
+{% endblock %}

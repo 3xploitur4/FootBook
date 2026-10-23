@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titre %}Supprimer un terrain{% endblock %}
+{% block contenu %}
+<div class="carte etroit p-4">
+  <h1>Supprimer « {{ object.nom }} » ?</h1>
+  <p>Cette action est définitive.</p>
+  <form method="post" class="d-flex gap-2">{% csrf_token %}
+    <button type="submit" class="btn btn-fb-danger px-4">Supprimer</button>
+    <a class="btn btn-fb-contour px-4" href="{% url 'mes_terrains' %}">Annuler</a>
+  </form>
+</div>
+{% endblock %}

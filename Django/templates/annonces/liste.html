@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block titre %}Annonces ouvertes{% endblock %}
+{% block contenu %}
+<div class="etroit">
+  <h1>Annonces ouvertes</h1>
+  <p class="petit">{{ annonces|length }} match{{ annonces|length|pluralize:"s" }} cherche{{ annonces|length|pluralize:"nt" }} des joueurs.</p>
+  {% for annonce in annonces %}
+    {% include "annonces/_carte.html" %}
+  {% empty %}
+    <div class="carte">Aucune annonce ouverte pour le moment.</div>
+  {% endfor %}
+  <p class="petit">Une annonce disparaît quand l'équipe est complète ou quand le match est passé.</p>
+</div>
+{% endblock %}

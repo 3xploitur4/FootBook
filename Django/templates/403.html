@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block titre %}Accès refusé{% endblock %}
+{% block contenu %}
+<div class="carte etroit">
+  <h1>Accès refusé</h1>
+  <p>Cette page n'est pas disponible pour votre type de compte.</p>
+  <a class="btn btn-fb" href="{% url 'espace' %}">Retour à Mon espace</a>
+</div>
+{% endblock %}

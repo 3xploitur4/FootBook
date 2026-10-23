@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block titre %}Réservations reçues{% endblock %}
+{% block contenu %}
+<div class="etroit">
+  <h1>Réservations reçues</h1>
+  <p class="petit">Les réservations de vos terrains, à venir d'abord.</p>
+  {% if not a_venir and not passees %}<div class="carte">Aucune réservation pour vos terrains.</div>{% endif %}
+  {% if a_venir %}<h2 class="h5 fw-bold mt-3">À venir</h2>{% endif %}
+  {% for r in a_venir %}{% include "reservations/_carte.html" with a_venir=True pour_proprietaire=True %}{% endfor %}
+  {% if passees %}<h2 class="h5 fw-bold mt-3">Passées</h2>{% endif %}
+  {% for r in passees %}{% include "reservations/_carte.html" with a_venir=False pour_proprietaire=True %}{% endfor %}
+</div>
+{% endblock %}

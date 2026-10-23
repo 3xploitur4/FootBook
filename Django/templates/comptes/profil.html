@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titre %}{{ joueur.nom_affiche }}{% endblock %}
+{% block contenu %}
+<div class="etroit">
+  {# Champs fixés par SCRUM-59 : jamais l'email ni les réservations. #}
+  <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="avatar" aria-hidden="true">{{ joueur.first_name|first|upper }}{{ joueur.last_name|first|upper }}</div>
+    <div><h1 class="mb-0">{{ joueur.nom_affiche }}</h1><div class="petit">@{{ joueur.username }}</div></div>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="col-6"><div class="carte"><div class="compteur" style="font-size:2rem">{{ joueur.matchs_joues }}</div><div class="petit">matchs joués</div></div></div>
+    <div class="col-6"><div class="carte"><div class="fw-bold fs-5">{{ joueur.date_joined|date:"F Y" }}</div><div class="petit">membre depuis</div></div></div>
+  </div>
+  <h2 class="h5 fw-bold">Ses annonces ouvertes</h2>
+  {% for annonce in annonces %}
+    {% include "annonces/_carte.html" %}
+  {% empty %}
+    <p class="petit">Aucune annonce ouverte.</p>
+  {% endfor %}
+</div>
+{% endblock %}
