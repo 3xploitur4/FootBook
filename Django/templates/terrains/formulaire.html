@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block titre %}{% if object %}Modifier un terrain{% else %}Ajouter un terrain{% endif %}{% endblock %}
+{% block fil %}Mes terrains{% endblock %}
+{% block titre_page %}{% if object %}Modifier « {{ object.nom }} »{% else %}Ajouter un terrain{% endif %}{% endblock %}
+{% block contenu %}
+<div class="row g-4">
+  <div class="col-xl-8">
+    <form method="post" class="carte p-4" novalidate>{% csrf_token %}
+      {% for e in form.non_field_errors %}<div class="ko-boite mb-3" role="alert">{{ e }}</div>{% endfor %}
+      <div class="row">
+        {% include "_champ.html" with champ=form.nom classe="col-md-8" %}
+        {% include "_champ.html" with champ=form.prix classe="col-md-4" %}
+      </div>
+      <div class="row">
+        {% include "_champ.html" with champ=form.categorie classe="col-md-6" %}
+        {% include "_champ.html" with champ=form.zone classe="col-md-6" %}
+      </div>
+      {% include "_champ.html" with champ=form.adresse %}
+      <div class="d-flex gap-2 mt-2">
+        <button type="submit" class="btn btn-fb px-4">Enregistrer</button>
+        <a class="btn btn-fb-contour px-4" href="{% url 'mes_terrains' %}">Annuler</a>
+      </div>
+    </form>
+  </div>
+  <div class="col-xl-4">
+    <div class="carte">
+      <h2><i class="bi bi-info-circle me-1"></i>Bon à savoir</h2>
+      <ul class="petit ps-3 mb-0">
+        <li class="mb-2">Le prix est en dirhams par heure et doit être supérieur à 0.</li>
+        <li class="mb-2">Deux de vos terrains ne peuvent pas porter le même nom.</li>
+        <li>Les créneaux réservables vont de 9:00 à 22:00, par tranches d'une heure.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

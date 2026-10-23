@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titre %}Connexion{% endblock %}
+{% block public %}
+<div class="auth">
+  <div class="panneau">
+    <h2>Content de vous revoir.</h2>
+    <p>Retrouvez vos réservations, vos QR codes et les annonces des autres joueurs.</p>
+  </div>
+  <div class="formulaire"><div>
+    <h1 class="mb-1">Connexion</h1>
+    <p class="petit mb-4">Pas encore de compte ? <a href="{% url 'inscription' %}">S'inscrire</a></p>
+    <form method="post" novalidate>{% csrf_token %}
+      {% for e in form.non_field_errors %}<div class="ko-boite mb-3" role="alert">{{ e }}</div>{% endfor %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% include "_champ.html" with champ=form.username %}
+      {% include "_champ.html" with champ=form.password %}
+      <button type="submit" class="btn btn-fb w-100 py-2 mt-2">Se connecter</button>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

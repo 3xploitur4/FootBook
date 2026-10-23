@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titre %}Valider un QR code{% endblock %}
+{% block fil %}Gérer{% endblock %}
+{% block titre_page %}Valider un QR code{% endblock %}
+{% block contenu %}
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="carte">
+      <h2><i class="bi bi-camera me-1"></i>Scanner</h2>
+      {# La caméra du navigateur n'est accessible qu'en HTTPS ou sur localhost (SCRUM-36). #}
+      <div class="camera mb-2" id="lecteur"><span class="petit" style="color:#cfd8d2">Démarrage de la caméra…</span></div>
+      <p class="petit mb-0" id="info-camera">Visez le QR code du joueur : il est validé automatiquement.</p>
+    </div>
+  </div>
+  <div class="col-lg-6 d-flex flex-column gap-3">
+    <div class="carte">
+      <h2><i class="bi bi-keyboard me-1"></i>Saisie manuelle</h2>
+      <form method="post" id="form-validation" class="d-flex gap-2 align-items-end" novalidate>{% csrf_token %}
+        <div class="flex-fill">
+          <label for="{{ form.code.id_for_label }}">{{ form.code.label }}</label>
+          {{ form.code }}
+        </div>
+        <button type="submit" class="btn btn-fb px-4">Valider</button>
+      </form>
+    </div>
+    {% if succes %}
+      <div class="ok-boite" role="status">
+        <strong class="fs-5" style="color:var(--vert-fonce)"><i class="bi bi-check-circle-fill me-1"></i>Réservation validée</strong>
+        <table class="tableau mt-2">
+          <tr><td class="petit" style="width:120px">Joueur</td><td><strong>{{ reservation.joueur.nom_affiche }}</strong></td></tr>
+          <tr><td class="petit">Terrain</td><td>{{ reservation.terrain.nom }}</td></tr>
+          <tr><td class="petit">Créneau</td><td>{{ reservation.date|date:"j/m" }} · {{ reservation.heure|time:"H:i" }} – {{ reservation.heure_fin|time:"H:i" }}</td></tr>
+        </table>
+        <div class="petit mt-2">Validée à {{ reservation.valide_le|time:"H:i" }}. Un second scan de ce code sera refusé.</div>
+      </div>
+    {% elif erreur %}
+      <div class="ko-boite" role="alert">
+        <strong class="fs-5" style="color:#7d1f17"><i class="bi bi-x-circle-fill me-1"></i>{{ erreur }}</strong>
+        {% if reservation %}<div class="mt-1">{{ reservation.joueur.nom_affiche }} · {{ reservation.terrain.nom }} · {{ reservation.heure|time:"H:i" }}</div>{% endif %}
+        <div class="petit mt-1">Rien n'a été modifié.</div>
+      </div>
+    {% else %}
+      <div class="carte petit"><i class="bi bi-info-circle me-1"></i>Seules les réservations de vos terrains, prévues aujourd'hui, peuvent être validées. Chaque code ne se valide qu'une fois.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'vendor/html5-qrcode/html5-qrcode.min.js' %}"></script>
+<script>
+(function () {
+  var info = document.getElementById("info-camera");
+  var zone = document.getElementById("lecteur");
+  function indisponible() { info.textContent = "Caméra indisponible : saisissez le code à la main."; zone.innerHTML = '<span class="petit" style="color:#cfd8d2">Caméra indisponible</span>'; }
+  if (typeof Html5Qrcode === "undefined") { indisponible(); return; }
+  zone.innerHTML = "";
+  var lecteur = new Html5Qrcode("lecteur");
+  var envoye = false;
+  lecteur.start({ facingMode: "environment" }, { fps: 10, qrbox: 240 }, function (texte) {
+    if (envoye) return;
+    envoye = true;
+    document.getElementById("id_code").value = texte.trim();
+    lecteur.stop().finally(function () { document.getElementById("form-validation").submit(); });
+  }).catch(indisponible);  // cas V5 (SCRUM-55)
+})();
+</script>
+{% endblock %}

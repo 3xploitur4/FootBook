@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titre %}Créer un compte{% endblock %}
+{% block public %}
+<div class="auth">
+  <div class="panneau">
+    <h2>Rejoignez FootBook.</h2>
+    <ul class="ps-3">
+      <li class="mb-2"><strong>Joueur</strong> : cherchez un terrain, réservez, recevez votre QR code et complétez votre équipe.</li>
+      <li><strong>Propriétaire</strong> : publiez vos terrains, suivez les réservations et validez les QR codes.</li>
+    </ul>
+  </div>
+  <div class="formulaire"><div>
+    <h1 class="mb-1">Créer un compte</h1>
+    <p class="petit mb-4">Déjà inscrit·e ? <a href="{% url 'connexion' %}">Se connecter</a></p>
+    <form method="post" novalidate>{% csrf_token %}
+      {% for e in form.non_field_errors %}<div class="ko-boite mb-3" role="alert">{{ e }}</div>{% endfor %}
+      {% include "_champ.html" with champ=form.role %}
+      <div class="row">
+        {% include "_champ.html" with champ=form.first_name classe="col-sm-6" %}
+        {% include "_champ.html" with champ=form.last_name classe="col-sm-6" %}
+      </div>
+      <div class="row">
+        {% include "_champ.html" with champ=form.username classe="col-sm-6" %}
+        {% include "_champ.html" with champ=form.email classe="col-sm-6" %}
+      </div>
+      <div class="row">
+        {% include "_champ.html" with champ=form.password1 classe="col-sm-6" %}
+        {% include "_champ.html" with champ=form.password2 classe="col-sm-6" %}
+      </div>
+      <button type="submit" class="btn btn-fb w-100 py-2 mt-2">S'inscrire</button>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

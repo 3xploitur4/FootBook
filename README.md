@@ -12,7 +12,7 @@ FootBook lets players search for available pitches, book a time slot, and receiv
 ##  Features
 
 ###  Authentication & roles
-- Sign up and log in with email and password (JWT-based)
+- Sign up and log in with username and password (Django session authentication, hashed passwords)
 - Two roles with separate interfaces: **Player** and **Pitch Owner**
 - Basic profile management
 
@@ -40,21 +40,21 @@ FootBook lets players search for available pitches, book a time slot, and receiv
 
 ##  Tech Stack
 
-| Component        | Technology                         |
-|------------------|------------------------------------|
-| Frontend         | React                              |
-| Backend          | Node.js + Express                  |
-| Database         | PostgreSQL (SQLite for the MVP)    |
-| QR codes         | `qrcode` library                   |
-| Authentication   | JWT                                |
-| Deployment       | Vercel / Render / Railway          |
+| Component        | Technology                                   |
+|------------------|----------------------------------------------|
+| Backend + pages  | Django 5.1 (server-rendered templates)       |
+| Frontend         | Django templates + Bootstrap 5.3             |
+| Database         | SQLite (MVP)                                  |
+| QR codes         | `qrcode` (SVG) ; scan with `html5-qrcode`     |
+| Authentication   | Django sessions, role-based access (403)     |
+| Deployment       | PythonAnywhere                               |
 
 ##  Data Model
 
 - **User** – id, name, email, password, role (player / owner)
 - **Terrain** – id, owner_id, name, category, price, zone, address
 - **Reservation** – id, terrain_id, user_id, date, time, status, qr_code
-- **Announcement** – id, reservation_id, missing_players, description
+- **Annonce** – id, reservation_id, missing_players, description
 - **Participation** – id, announcement_id, user_id
 
 ##  MVP Success Criteria
@@ -83,23 +83,33 @@ FootBook lets players search for available pitches, book a time slot, and receiv
 - **Reliability:** each QR code is single-use
 - **Portability:** runs in any browser, no installation needed
 
-- ## Conception
+##  Conception
 - Maquettes et diagramme de classes (Figma) : https://www.figma.com/design/hEv9ifxAFM3uYmsss0s1zu
 - Fichiers de conception dans `docs/conception/`
 
 ##  Getting Started
 
 ```bash
-# Clone the repository
-git clone https://github.com/3xploitur4/footbook.git
-cd footbook
-
-# Install dependencies
-npm install
-
-# Run the app
-npm run dev
+git clone https://github.com/3xploitur4/FootBook.git
+cd FootBook/Django
+python -m venv venv && source venv/bin/activate   # Windows : venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py charger_demo      # comptes proprio1, proprio2, joueur1..3 (mot de passe : footbook2026)
+python manage.py runserver         # http://127.0.0.1:8000
+python manage.py test              # 70 tests (sprints 1 à 4)
 ```
+
+Voir `Django/README.md` pour le détail.
+
+##  Documentation
+
+| Document | Contenu |
+|---|---|
+| [docs/GUIDE_INSTALLATION_DEPLOIEMENT.md](docs/GUIDE_INSTALLATION_DEPLOIEMENT.md) | Lancer l'application en local, comptes de démonstration, mise en ligne sur PythonAnywhere |
+| [docs/GUIDE_UTILISATEUR.md](docs/GUIDE_UTILISATEUR.md) | Utilisation pas à pas, côté joueur et côté propriétaire, avec captures |
+| [docs/RAPPORT_DE_TESTS.md](docs/RAPPORT_DE_TESTS.md) | 70 tests unitaires, parcours navigateur, 28 scénarios de validation, matrice de traçabilité |
+| [docs/conception/](docs/conception/) | Diagrammes UML (cas d'utilisation, classes, séquences) |
 
 ## 👥 Authors
 

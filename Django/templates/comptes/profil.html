@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titre %}{{ joueur.nom_affiche }}{% endblock %}
+{% block fil %}Profil joueur{% endblock %}
+{% block titre_page %}{{ joueur.nom_affiche }}{% endblock %}
+{% block contenu %}
+{# Champs fixés par SCRUM-59 : jamais l'email ni les réservations. #}
+<div class="banniere d-flex align-items-center gap-4 mb-4">
+  <div class="avatar" aria-hidden="true">{{ joueur.first_name|first|upper }}{{ joueur.last_name|first|upper }}</div>
+  <div class="flex-fill"><div class="fs-3 fw-bold">{{ joueur.nom_affiche }}</div><div style="color:rgba(255,255,255,.8)">@{{ joueur.username }} · Joueur</div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-4 d-flex flex-column gap-3">
+    <div class="carte stat"><div class="icone"><i class="bi bi-trophy"></i></div><div><div class="valeur">{{ joueur.matchs_joues }}</div><div class="libelle">matchs joués</div></div></div>
+    <div class="carte stat"><div class="icone"><i class="bi bi-calendar3"></i></div><div><div class="fw-bold fs-5">{{ joueur.date_joined|date:"F Y" }}</div><div class="libelle">membre depuis</div></div></div>
+  </div>
+  <div class="col-lg-8">
+    <div class="carte">
+      <h2>Ses annonces ouvertes</h2>
+      <div class="row g-3">
+        {% for annonce in annonces %}
+          <div class="col-xl-6">{% include "annonces/_carte.html" %}</div>
+        {% empty %}
+          <div class="col-12"><div class="vide"><i class="bi bi-megaphone"></i>Aucune annonce ouverte.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

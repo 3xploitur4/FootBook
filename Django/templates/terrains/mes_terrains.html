@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titre %}Mes terrains{% endblock %}
+{% block fil %}Gérer{% endblock %}
+{% block titre_page %}Mes terrains{% endblock %}
+{% block actions %}<a class="btn btn-fb" href="{% url 'ajouter_terrain' %}"><i class="bi bi-plus-lg me-1"></i>Ajouter un terrain</a>{% endblock %}
+{% block contenu %}
+{% if terrains %}
+<div class="carte tableau-carte">
+  <div class="table-responsive">
+  <table class="tableau">
+    <thead><tr><th>Terrain</th><th>Catégorie</th><th>Zone</th><th>Adresse</th><th class="text-end">Prix</th><th class="text-end">Actions</th></tr></thead>
+    <tbody>
+    {% for terrain in terrains %}
+      <tr>
+        <td><strong>{{ terrain.nom }}</strong></td>
+        <td><span class="tag">{{ terrain.get_categorie_display }}</span></td>
+        <td>{{ terrain.get_zone_display }}</td>
+        <td class="petit">{{ terrain.adresse }}</td>
+        <td class="text-end prix">{{ terrain.prix|floatformat:"-2" }} DH / h</td>
+        <td class="text-end text-nowrap">
+          <a class="btn btn-fb-contour btn-sm" href="{% url 'modifier_terrain' terrain.pk %}"><i class="bi bi-pencil"></i> Modifier</a>
+          <a class="btn btn-fb-danger btn-sm" href="{% url 'supprimer_terrain' terrain.pk %}"><i class="bi bi-trash"></i> Supprimer</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% else %}
+  <div class="carte vide"><i class="bi bi-geo-alt"></i>Vous n'avez pas encore de terrain. <a href="{% url 'ajouter_terrain' %}">Ajoutez le premier.</a></div>
+{% endif %}
+{% endblock %}

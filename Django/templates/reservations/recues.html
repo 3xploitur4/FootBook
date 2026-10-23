@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titre %}Réservations reçues{% endblock %}
+{% block fil %}Gérer{% endblock %}
+{% block titre_page %}Réservations reçues{% endblock %}
+{% block actions %}<a class="btn btn-fb" href="{% url 'valider_qr' %}"><i class="bi bi-qr-code-scan me-1"></i>Valider un QR code</a>{% endblock %}
+{% block contenu %}
+{% if not a_venir and not passees %}
+  <div class="carte vide"><i class="bi bi-inbox"></i>Aucune réservation pour vos terrains.</div>
+{% else %}
+  <h2>À venir <span class="petit fw-normal">({{ a_venir|length }})</span></h2>
+  <div class="carte tableau-carte mb-4">
+    {% if a_venir %}
+    <div class="table-responsive"><table class="tableau">
+      <thead><tr><th>Date</th><th>Créneau</th><th>Terrain</th><th>Joueur</th><th>Statut</th></tr></thead>
+      <tbody>{% for r in a_venir %}{% include "reservations/_ligne.html" with a_venir=True pour_proprietaire=True %}{% endfor %}</tbody>
+    </table></div>
+    {% else %}<div class="vide">Aucune réservation à venir.</div>{% endif %}
+  </div>
+  <h2>Passées <span class="petit fw-normal">({{ passees|length }})</span></h2>
+  <div class="carte tableau-carte">
+    {% if passees %}
+    <div class="table-responsive"><table class="tableau">
+      <thead><tr><th>Date</th><th>Créneau</th><th>Terrain</th><th>Joueur</th><th>Statut</th></tr></thead>
+      <tbody>{% for r in passees %}{% include "reservations/_ligne.html" with a_venir=False pour_proprietaire=True %}{% endfor %}</tbody>
+    </table></div>
+    {% else %}<div class="vide">Aucune réservation passée.</div>{% endif %}
+  </div>
+{% endif %}
+{% endblock %}

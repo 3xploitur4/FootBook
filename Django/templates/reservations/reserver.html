@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block titre %}Réserver un créneau{% endblock %}
+{% block fil %}Terrains{% endblock %}
+{% block titre_page %}Réserver « {{ terrain.nom }} »{% endblock %}
+{% block contenu %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="carte">
+      <h2>{{ terrain.nom }}</h2>
+      <div class="mb-2"><span class="tag">{{ terrain.get_categorie_display }}</span><span class="tag">{{ terrain.get_zone_display }}</span></div>
+      <div class="petit mb-1"><i class="bi bi-geo-alt me-1"></i>{{ terrain.adresse }}</div>
+      <div class="petit mb-3"><i class="bi bi-people me-1"></i>{{ terrain.nb_joueurs }} joueurs</div>
+      <div class="prix fs-4">{{ terrain.prix|floatformat:"-2" }} <span class="petit fw-normal">DH / h</span></div>
+    </div>
+    <div class="carte mt-3 petit">
+      <i class="bi bi-info-circle me-1"></i>Créneaux d'une heure, de 9:00 à 22:00, jusqu'à 14 jours à l'avance. Un QR code vous est remis dès la confirmation.
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="carte">
+      <h2>1. Choisissez une date</h2>
+      <form method="get" id="choix-date" class="mb-2">
+        <div class="jours" role="list">
+          {% for d in dates %}
+            <a role="listitem" href="?date={{ d|date:'Y-m-d' }}" class="{% if d == jour %}actif{% endif %}"{% if d == jour %} aria-current="date"{% endif %}>
+              <div class="j">{{ d|date:"D" }}</div><div class="n">{{ d|date:"j" }}</div><div class="j">{{ d|date:"M" }}</div>
+            </a>
+          {% endfor %}
+        </div>
+        <label for="date" class="visually-hidden">Date</label>
+        <noscript><select id="date" name="date">{% for d in dates %}<option value="{{ d|date:'Y-m-d' }}"{% if d == jour %} selected{% endif %}>{{ d|date:"l j F" }}</option>{% endfor %}</select>
+        <button type="submit" class="btn btn-fb-contour mt-2">Voir les créneaux</button></noscript>
+      </form>
+
+      <form method="post" novalidate>{% csrf_token %}
+        <input type="hidden" name="date" value="{{ jour|date:'Y-m-d' }}">
+        <h2 class="mt-4">2. Choisissez un créneau · {{ jour|date:"l j F" }}</h2>
+        {% for e in form.non_field_errors %}<div class="ko-boite mb-3" role="alert">{{ e }}</div>{% endfor %}
+        {% for e in form.date.errors %}<div class="erreur mb-2">{{ e }}</div>{% endfor %}
+        <fieldset class="mb-3">
+          <legend class="visually-hidden">Créneaux libres (1 h)</legend>
+          {% if creneaux %}
+            <div class="creneaux">
+              {% for h in creneaux %}
+                <div><input type="radio" name="heure" id="h{{ forloop.counter }}" value="{{ h|time:'H:i' }}"{% if form.heure.value == h|time:'H:i' %} checked{% endif %} required>
+                <label for="h{{ forloop.counter }}">{{ h|time:"H:i" }}</label></div>
+              {% endfor %}
+            </div>
+            <div class="aide mt-2">Les créneaux déjà réservés n'apparaissent pas.</div>
+          {% else %}
+            <div class="vide"><i class="bi bi-calendar-x"></i>Plus aucun créneau libre ce jour-là. Choisissez une autre date.</div>
+          {% endif %}
+          {% for e in form.heure.errors %}<div class="erreur">{{ e }}</div>{% endfor %}
+        </fieldset>
+        <div class="d-flex gap-2 justify-content-end border-top pt-3">
+          <a class="btn btn-fb-contour px-4" href="{% url 'terrains' %}">Annuler</a>
+          <button type="submit" class="btn btn-fb px-4"{% if not creneaux %} disabled{% endif %}>Confirmer la réservation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titre %}Publier une annonce{% endblock %}
+{% block fil %}Mes réservations{% endblock %}
+{% block titre_page %}Publier une annonce{% endblock %}
+{% block contenu %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="carte">
+      <h2>Votre match</h2>
+      <strong>{{ reservation.terrain.nom }}</strong>
+      <div class="my-2"><span class="tag">{{ reservation.terrain.get_categorie_display }}</span><span class="tag">{{ reservation.terrain.get_zone_display }}</span></div>
+      <div>{{ reservation.date|date:"l j F" }} · {{ reservation.heure|time:"H:i" }} – {{ reservation.heure_fin|time:"H:i" }}</div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <form method="post" class="carte p-4" novalidate>{% csrf_token %}
+      <p class="petit">Pour compléter votre équipe sur ce match. Une seule annonce par réservation ; elle se ferme quand il ne manque plus personne.</p>
+      {% include "_champ.html" with champ=form.joueurs_manquants %}
+      {% include "_champ.html" with champ=form.description %}
+      <div class="d-flex gap-2 justify-content-end">
+        <a class="btn btn-fb-contour px-4" href="{% url 'mes_reservations' %}">Annuler</a>
+        <button type="submit" class="btn btn-fb px-4">Publier l'annonce</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

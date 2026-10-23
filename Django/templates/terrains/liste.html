@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titre %}Terrains{% endblock %}
+{% block fil %}Jouer{% endblock %}
+{% block titre_page %}Terrains{% endblock %}
+{% block contenu %}
+<div class="row g-4">
+  <div class="col-lg-3">
+    {# Filtres en GET : la recherche se partage et le bouton retour fonctionne (SCRUM-51). #}
+    <form method="get" class="carte filtres" novalidate>
+      <h2><i class="bi bi-funnel me-1"></i>Filtres</h2>
+      {% for e in form.non_field_errors %}<div class="ko-boite mb-3 p-2 petit" role="alert">{{ e }}</div>{% endfor %}
+      {% include "_champ.html" with champ=form.categorie %}
+      {% include "_champ.html" with champ=form.zone %}
+      <div class="row g-2">
+        {% include "_champ.html" with champ=form.prix_min classe="col-6" %}
+        {% include "_champ.html" with champ=form.prix_max classe="col-6" %}
+      </div>
+      <button type="submit" class="btn btn-fb w-100 mb-2">Filtrer</button>
+      <a class="btn btn-fb-contour w-100" href="{% url 'terrains' %}">Réinitialiser</a>
+    </form>
+  </div>
+  <div class="col-lg-9">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <p class="petit mb-0">{{ terrains|length }} terrain{{ terrains|length|pluralize }} · triés par prix croissant</p>
+    </div>
+    <div class="row g-3">
+      {% for terrain in terrains %}
+        <div class="col-xl-4 col-md-6">
+          <div class="carte h-100 d-flex flex-column gap-2">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <strong class="fs-6">{{ terrain.nom }}</strong>
+              <span class="tag">{{ terrain.get_categorie_display }}</span>
+            </div>
+            <div class="petit"><i class="bi bi-geo-alt me-1"></i>{{ terrain.get_zone_display }} · {{ terrain.adresse }}</div>
+            <div class="petit"><i class="bi bi-people me-1"></i>{{ terrain.nb_joueurs }} joueurs</div>
+            <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+              <span class="prix fs-5">{{ terrain.prix|floatformat:"-2" }} <span class="petit fw-normal">DH / h</span></span>
+              <a class="btn btn-fb" href="{% url 'reserver' terrain.pk %}">Réserver</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12"><div class="carte vide"><i class="bi bi-search"></i>Aucun terrain trouvé. Essayez d'élargir les filtres.</div></div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

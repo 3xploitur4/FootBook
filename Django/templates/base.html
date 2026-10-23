@@ -1,0 +1,85 @@
+{% load static %}<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titre %}FootBook{% endblock %} · FootBook</title>
+  {# Bibliothèques servies localement (Bootstrap 5.3.3, Bootstrap Icons 1.11.3) : l'application marche sans CDN. #}
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/footbook.css' %}">
+</head>
+<body>
+{% with page=request.resolver_match.url_name %}
+{% if user.is_authenticated %}
+<div class="app" id="app">
+  <aside class="sidebar" aria-label="Navigation principale">
+    <a class="marque" href="{% url 'espace' %}"><span class="logo"><i class="bi bi-dribbble"></i></span>FootBook</a>
+    {# Menu par profil (SCRUM-50) ; la vérification réelle est faite dans chaque vue (A7). #}
+    <nav>
+      <a href="{% url 'espace' %}" class="{% if page == 'espace' %}actif{% endif %}"><i class="bi bi-grid-1x2"></i>Tableau de bord</a>
+      {% if user.est_joueur %}
+        <div class="section">Jouer</div>
+        <a href="{% url 'terrains' %}" class="{% if page == 'terrains' or page == 'reserver' %}actif{% endif %}"><i class="bi bi-search"></i>Terrains</a>
+        <a href="{% url 'mes_reservations' %}" class="{% if page == 'mes_reservations' or page == 'qr_code' or page == 'publier_annonce' %}actif{% endif %}"><i class="bi bi-calendar-check"></i>Mes réservations</a>
+        <a href="{% url 'annonces' %}" class="{% if page == 'annonces' %}actif{% endif %}"><i class="bi bi-megaphone"></i>Annonces</a>
+        <a href="{% url 'profil_joueur' user.pk %}" class="{% if page == 'profil_joueur' %}actif{% endif %}"><i class="bi bi-person"></i>Mon profil</a>
+      {% elif user.est_proprietaire %}
+        <div class="section">Gérer</div>
+        <a href="{% url 'mes_terrains' %}" class="{% if page == 'mes_terrains' or page == 'ajouter_terrain' or page == 'modifier_terrain' or page == 'supprimer_terrain' %}actif{% endif %}"><i class="bi bi-geo-alt"></i>Mes terrains</a>
+        <a href="{% url 'reservations_recues' %}" class="{% if page == 'reservations_recues' %}actif{% endif %}"><i class="bi bi-inbox"></i>Réservations reçues</a>
+        <a href="{% url 'valider_qr' %}" class="{% if page == 'valider_qr' %}actif{% endif %}"><i class="bi bi-qr-code-scan"></i>Valider un QR code</a>
+      {% endif %}
+    </nav>
+    <div class="bas">
+      <div class="moi">
+        <div class="avatar">{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</div>
+        <div><div class="fw-semibold">{{ user.nom_affiche }}</div><div class="role">{{ user.get_role_display }}</div></div>
+      </div>
+      <nav>
+        <form method="post" action="{% url 'deconnexion' %}">{% csrf_token %}
+          <button type="submit"><i class="bi bi-box-arrow-left"></i>Déconnexion</button>
+        </form>
+      </nav>
+    </div>
+  </aside>
+  <div class="principal">
+    <div class="barre-mobile">
+      <button type="button" aria-label="Ouvrir le menu" onclick="document.getElementById('app').classList.toggle('menu-ouvert')"><i class="bi bi-list"></i></button>
+      <strong>FootBook</strong><span></span>
+    </div>
+    <header class="entete">
+      <div>
+        <div class="fil">{% block fil %}FootBook{% endblock %}</div>
+        <h1>{% block titre_page %}{% endblock %}</h1>
+      </div>
+      <div class="actions">{% block actions %}{% endblock %}</div>
+    </header>
+    <main class="contenu">
+      {% if messages %}<div class="messages">{% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} mb-2" role="status">{{ message }}</div>
+      {% endfor %}</div>{% endif %}
+      {% block contenu %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+<header class="public-nav">
+  <div class="container-xl">
+    <a class="marque" href="{% url 'accueil' %}"><span class="logo"><i class="bi bi-dribbble"></i></span>FootBook</a>
+    <nav>
+      <a class="btn btn-fb-contour" href="{% url 'connexion' %}">Connexion</a>
+      <a class="btn btn-fb" href="{% url 'inscription' %}">Créer un compte</a>
+    </nav>
+  </div>
+</header>
+{% if messages %}<div class="container-xl pt-3">{% for message in messages %}
+  <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}" role="status">{{ message }}</div>
+{% endfor %}</div>{% endif %}
+{% block public %}<main class="container-xl py-5">{% block contenu_public %}{% endblock %}</main>{% endblock %}
+{% endif %}
+{% endwith %}
+<script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
