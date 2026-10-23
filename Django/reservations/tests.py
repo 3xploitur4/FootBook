@@ -81,6 +81,13 @@ class ReservationTests(TestCase):
         self.client.force_login(self.proprio)
         self.assertEqual(self.client.get(self.url).status_code, 403)
 
+    def test_creneaux_passes_du_jour_absents(self):  # TV-15
+        maintenant = timezone.localtime().replace(hour=14, minute=30)
+        with mock.patch("reservations.creneaux.timezone.localtime", return_value=maintenant):
+            libres = creneaux_libres(self.terrain, maintenant.date())
+        self.assertEqual(libres[0], time(15))
+        self.assertNotIn(time(14), libres)
+
     def test_codes_uniques_et_imprevisibles(self):
         codes = {generer_code() for _ in range(500)}
         self.assertEqual(len(codes), 500)

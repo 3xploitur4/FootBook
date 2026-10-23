@@ -1,25 +1,68 @@
 {% extends "base.html" %}
-{% block titre %}Mon espace{% endblock %}
+{% block titre %}Tableau de bord{% endblock %}
+{% block fil %}Bonjour, {{ user.first_name|default:user.username }}{% endblock %}
+{% block titre_page %}Tableau de bord{% endblock %}
+{% block actions %}
+  {% if user.est_joueur %}<a class="btn btn-fb" href="{% url 'terrains' %}"><i class="bi bi-search me-1"></i>Réserver un terrain</a>
+  {% else %}<a class="btn btn-fb-contour" href="{% url 'ajouter_terrain' %}"><i class="bi bi-plus-lg me-1"></i>Ajouter un terrain</a>
+  <a class="btn btn-fb" href="{% url 'valider_qr' %}"><i class="bi bi-qr-code-scan me-1"></i>Valider un QR code</a>{% endif %}
+{% endblock %}
 {% block contenu %}
-<h1>Mon espace</h1>
-<p>Bonjour, {{ user.first_name|default:user.username }}. Que voulez-vous faire ?</p>
 {% if user.est_joueur %}
-  {# Compteur de matchs joués (US-09, SCRUM-41) #}
-  <div class="carte d-flex justify-content-between align-items-center mb-3" style="border:2px solid var(--vert)">
-    <div><strong>Matchs joués</strong><div class="petit">Comptés à chaque QR code validé</div></div>
-    <div class="compteur">{{ user.matchs_joues }}</div>
+  <div class="row g-3 mb-4">
+    {# Compteur de matchs joués (US-09, SCRUM-41) #}
+    <div class="col-md-4"><div class="carte stat" style="border-color:var(--vert)"><div class="icone"><i class="bi bi-trophy"></i></div><div><div class="valeur">{{ user.matchs_joues }}</div><div class="libelle">Matchs joués · comptés à chaque QR code validé</div></div></div></div>
+    <div class="col-md-4"><div class="carte stat"><div class="icone"><i class="bi bi-calendar-check"></i></div><div><div class="valeur">{{ nb_a_venir }}</div><div class="libelle">Réservations à venir</div></div></div></div>
+    <div class="col-md-4"><div class="carte stat"><div class="icone"><i class="bi bi-megaphone"></i></div><div><div class="valeur">{{ nb_annonces }}</div><div class="libelle">Annonces ouvertes à rejoindre</div></div></div></div>
   </div>
-  <div class="row g-3">
-    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'terrains' %}"><strong>Terrains</strong><div class="petit">Chercher un terrain.</div></a></div>
-    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'mes_reservations' %}"><strong>Mes réservations</strong><div class="petit">Voir mes réservations et mes QR codes.</div></a></div>
-    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'annonces' %}"><strong>Annonces</strong><div class="petit">Voir les annonces ouvertes.</div></a></div>
-    <div class="col-md-3 col-sm-6"><a class="carte h-100" href="{% url 'profil_joueur' user.pk %}"><strong>Mon profil</strong><div class="petit">Ce que les autres joueurs voient de moi.</div></a></div>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="carte">
+        <div class="carte-titre"><h2>Mes prochains matchs</h2><a href="{% url 'mes_reservations' %}" class="petit">Tout voir</a></div>
+        {% for r in prochaines %}
+          <div class="ligne-resa">
+            <div class="date-bloc"><div class="m">{{ r.date|date:"M" }}</div><div class="d">{{ r.date|date:"j" }}</div></div>
+            <div class="flex-fill"><strong>{{ r.terrain.nom }}</strong><div class="petit">{{ r.date|date:"l" }} · {{ r.heure|time:"H:i" }} – {{ r.heure_fin|time:"H:i" }} · {{ r.terrain.get_zone_display }}</div></div>
+            <span class="statut statut-{{ r.statut }}">{{ r.get_statut_display }}</span>
+            <a class="btn btn-fb-contour btn-sm" href="{% url 'qr_code' r.pk %}"><i class="bi bi-qr-code"></i> QR code</a>
+          </div>
+        {% empty %}
+          <div class="vide"><i class="bi bi-calendar"></i>Aucun match prévu. <a href="{% url 'terrains' %}">Chercher un terrain</a></div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-4 d-flex flex-column gap-3">
+      <a class="carte raccourci" href="{% url 'terrains' %}"><i class="bi bi-search"></i><div><strong>Terrains</strong><div class="petit">Chercher et réserver un créneau.</div></div></a>
+      <a class="carte raccourci" href="{% url 'annonces' %}"><i class="bi bi-megaphone"></i><div><strong>Annonces</strong><div class="petit">Rejoindre un match auquel il manque des joueurs.</div></div></a>
+      <a class="carte raccourci" href="{% url 'profil_joueur' user.pk %}"><i class="bi bi-person"></i><div><strong>Mon profil</strong><div class="petit">Ce que les autres joueurs voient de moi.</div></div></a>
+    </div>
   </div>
 {% else %}
-  <div class="row g-3">
-    <div class="col-md-4"><a class="carte h-100" href="{% url 'mes_terrains' %}"><strong>Mes terrains</strong><div class="petit">Ajouter ou modifier mes terrains.</div></a></div>
-    <div class="col-md-4"><a class="carte h-100" href="{% url 'reservations_recues' %}"><strong>Réservations reçues</strong><div class="petit">Voir les réservations de mes terrains.</div></a></div>
-    <div class="col-md-4"><a class="carte h-100" href="{% url 'valider_qr' %}"><strong>Valider un QR code</strong><div class="petit">Contrôler un justificatif.</div></a></div>
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="carte stat"><div class="icone"><i class="bi bi-geo-alt"></i></div><div><div class="valeur">{{ nb_terrains }}</div><div class="libelle">Terrains publiés</div></div></div></div>
+    <div class="col-md-4"><div class="carte stat"><div class="icone"><i class="bi bi-calendar-event"></i></div><div><div class="valeur">{{ nb_a_venir }}</div><div class="libelle">Réservations à venir</div></div></div></div>
+    <div class="col-md-4"><div class="carte stat"><div class="icone"><i class="bi bi-patch-check"></i></div><div><div class="valeur">{{ nb_validees }}</div><div class="libelle">QR codes validés</div></div></div></div>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="carte">
+        <div class="carte-titre"><h2>Aujourd'hui</h2><a href="{% url 'reservations_recues' %}" class="petit">Toutes les réservations</a></div>
+        {% for r in du_jour %}
+          <div class="ligne-resa">
+            <div class="date-bloc"><div class="m">heure</div><div class="d">{{ r.heure|time:"H" }}h</div></div>
+            <div class="flex-fill"><strong>{{ r.terrain.nom }}</strong><div class="petit">{{ r.joueur.nom_affiche }} · {{ r.heure|time:"H:i" }} – {{ r.heure_fin|time:"H:i" }}</div></div>
+            <span class="statut statut-{{ r.statut }}">{{ r.get_statut_display }}</span>
+          </div>
+        {% empty %}
+          <div class="vide"><i class="bi bi-calendar"></i>Aucune réservation aujourd'hui.</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-4 d-flex flex-column gap-3">
+      <a class="carte raccourci" href="{% url 'mes_terrains' %}"><i class="bi bi-geo-alt"></i><div><strong>Mes terrains</strong><div class="petit">Ajouter ou modifier mes terrains.</div></div></a>
+      <a class="carte raccourci" href="{% url 'reservations_recues' %}"><i class="bi bi-inbox"></i><div><strong>Réservations reçues</strong><div class="petit">Voir les réservations de mes terrains.</div></div></a>
+      <a class="carte raccourci" href="{% url 'valider_qr' %}"><i class="bi bi-qr-code-scan"></i><div><strong>Valider un QR code</strong><div class="petit">Contrôler un justificatif à l'arrivée.</div></div></a>
+    </div>
   </div>
 {% endif %}
 {% endblock %}

@@ -1,25 +1,35 @@
 {% extends "base.html" %}
 {% block titre %}QR code{% endblock %}
+{% block fil %}Mes réservations{% endblock %}
+{% block titre_page %}QR code de la réservation{% endblock %}
+{% block actions %}<button class="btn btn-fb-contour" onclick="window.print()"><i class="bi bi-printer me-1"></i>Imprimer</button>{% endblock %}
 {% block contenu %}
-<div class="etroit">
-  <h1>Votre QR code</h1>
-  <div class="carte text-center mb-3">
-    <div class="qr" role="img" aria-label="QR code de la réservation">{{ qr }}</div>
-    <div class="petit">Présentez ce code au propriétaire à votre arrivée.</div>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="carte text-center p-4">
+      <div class="qr" role="img" aria-label="QR code de la réservation">{{ qr }}</div>
+      <div class="petit mt-2 mb-3">Présentez ce code au propriétaire à votre arrivée.</div>
+      <div class="petit text-start mb-1">Si le scan ne marche pas, donnez ce code :</div>
+      <div class="code-texte">{{ reservation.code }}</div>
+    </div>
   </div>
-  <div class="carte mb-3">
-    <div class="petit mb-2">Si le scan ne marche pas, donnez ce code :</div>
-    <div class="code-texte">{{ reservation.code }}</div>
+  <div class="col-lg-7">
+    <div class="carte">
+      <div class="carte-titre"><h2>{{ reservation.terrain.nom }}</h2><span class="statut statut-{{ reservation.statut }}">{{ reservation.get_statut_display }}</span></div>
+      <table class="tableau">
+        <tr><td class="petit" style="width:160px">Date</td><td><strong>{{ reservation.date|date:"l j F Y" }}</strong></td></tr>
+        <tr><td class="petit">Créneau</td><td><strong>{{ reservation.heure|time:"H:i" }} – {{ reservation.heure_fin|time:"H:i" }}</strong></td></tr>
+        <tr><td class="petit">Catégorie</td><td>{{ reservation.terrain.get_categorie_display }}</td></tr>
+        <tr><td class="petit">Zone · adresse</td><td>{{ reservation.terrain.get_zone_display }} · {{ reservation.terrain.adresse }}</td></tr>
+        <tr><td class="petit">Prix</td><td class="prix">{{ reservation.terrain.prix|floatformat:"-2" }} DH</td></tr>
+      </table>
+      <div class="d-flex gap-2 mt-3">
+        {% if reservation.statut == "CONFIRMEE" and reservation.est_a_venir and not reservation.annonce %}
+          <a class="btn btn-fb" href="{% url 'publier_annonce' reservation.pk %}"><i class="bi bi-megaphone me-1"></i>Publier une annonce pour ce match</a>
+        {% endif %}
+        <a class="btn btn-fb-contour" href="{% url 'mes_reservations' %}">Mes réservations</a>
+      </div>
+    </div>
   </div>
-  <div class="carte mb-3">
-    <strong>{{ reservation.terrain.nom }}</strong>
-    <div class="my-1"><span class="tag">{{ reservation.terrain.get_categorie_display }}</span><span class="tag">{{ reservation.terrain.get_zone_display }}</span></div>
-    <div>{{ reservation.date|date:"l j F" }} · {{ reservation.heure|time:"H:i" }} – {{ reservation.heure_fin|time:"H:i" }}</div>
-    <div class="mt-1"><span class="statut statut-{{ reservation.statut }}">{{ reservation.get_statut_display }}</span></div>
-  </div>
-  {% if reservation.statut == "CONFIRMEE" and reservation.est_a_venir and not reservation.annonce %}
-    <a class="btn btn-fb w-100 mb-2" href="{% url 'publier_annonce' reservation.pk %}">Publier une annonce pour ce match</a>
-  {% endif %}
-  <a class="btn btn-fb-contour w-100" href="{% url 'mes_reservations' %}">Mes réservations</a>
 </div>
 {% endblock %}

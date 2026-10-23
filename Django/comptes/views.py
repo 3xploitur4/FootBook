@@ -36,7 +36,33 @@ class ConnexionView(LoginView):
 
 
 class EspaceView(LoginRequiredMixin, TemplateView):
+    """Tableau de bord : raccourcis et chiffres clés selon le rôle (US-01, US-09)."""
+
     template_name = "comptes/espace.html"
+
+    def get_context_data(self, **kwargs):
+        from django.utils import timezone
+
+        from annonces.models import Annonce
+        from reservations.models import Reservation, Statut
+
+        contexte = super().get_context_data(**kwargs)
+        user = self.request.user
+        aujourd_hui = timezone.localdate()
+        if user.est_joueur:
+            a_venir = [r for r in Reservation.objects.filter(joueur=user, date__gte=aujourd_hui)
+                       .select_related("terrain") if r.est_a_venir]
+            contexte.update(prochaines=a_venir[:5], nb_a_venir=len(a_venir),
+                            nb_annonces=Annonce.ouvertes().exclude(reservation__joueur=user).count())
+        else:
+            recues = Reservation.objects.filter(terrain__proprietaire=user).select_related("terrain", "joueur")
+            contexte.update(
+                nb_terrains=user.terrains.count(),
+                du_jour=list(recues.filter(date=aujourd_hui)),
+                nb_a_venir=sum(1 for r in recues.filter(date__gte=aujourd_hui) if r.est_a_venir),
+                nb_validees=recues.filter(statut=Statut.VALIDEE).count(),
+            )
+        return contexte
 
 
 class ProfilJoueurView(RoleRequisMixin, DetailView):

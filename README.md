@@ -97,10 +97,19 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py charger_demo      # comptes proprio1, proprio2, joueur1..3 (mot de passe : footbook2026)
 python manage.py runserver         # http://127.0.0.1:8000
-python manage.py test              # 69 tests (sprints 1 à 4)
+python manage.py test              # 70 tests (sprints 1 à 4)
 ```
 
 Voir `Django/README.md` pour le détail.
+
+##  Documentation
+
+| Document | Contenu |
+|---|---|
+| [docs/GUIDE_INSTALLATION_DEPLOIEMENT.md](docs/GUIDE_INSTALLATION_DEPLOIEMENT.md) | Lancer l'application en local, comptes de démonstration, mise en ligne sur PythonAnywhere |
+| [docs/GUIDE_UTILISATEUR.md](docs/GUIDE_UTILISATEUR.md) | Utilisation pas à pas, côté joueur et côté propriétaire, avec captures |
+| [docs/RAPPORT_DE_TESTS.md](docs/RAPPORT_DE_TESTS.md) | 70 tests unitaires, parcours navigateur, 28 scénarios de validation, matrice de traçabilité |
+| [docs/conception/](docs/conception/) | Diagrammes UML (cas d'utilisation, classes, séquences) |
 
 ## 👥 Authors
 

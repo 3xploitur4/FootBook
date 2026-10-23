@@ -21,6 +21,10 @@ class FormulaireInscription(UserCreationForm):
         self.fields["role"].choices = Role.choices
         self.fields["username"].widget.attrs["placeholder"] = "ex. ali_foot"
         self.fields["email"].widget.attrs["placeholder"] = "nom@exemple.com"
+        # Aides courtes : les règles complètes restent appliquées par les validateurs de Django.
+        self.fields["username"].help_text = "Lettres, chiffres et @ . + - _ uniquement."
+        self.fields["password1"].help_text = "8 caractères minimum, pas uniquement des chiffres."
+        self.fields["password2"].help_text = ""
 
     def clean_email(self):
         # R1, sans tenir compte des majuscules.

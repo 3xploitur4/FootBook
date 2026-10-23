@@ -1,0 +1,20 @@
+<tr>
+  <td class="text-nowrap"><strong>{{ r.date|date:"D j M" }}</strong></td>
+  <td class="text-nowrap">{{ r.heure|time:"H:i" }} – {{ r.heure_fin|time:"H:i" }}</td>
+  <td><strong>{{ r.terrain.nom }}</strong>{% if not pour_proprietaire %}<div class="petit">{{ r.terrain.get_categorie_display }} · {{ r.terrain.get_zone_display }}</div>{% endif %}</td>
+  {% if pour_proprietaire %}
+    <td>{{ r.joueur.nom_affiche }}</td>
+  {% endif %}
+  <td><span class="statut statut-{{ r.statut }}">{{ r.get_statut_display }}</span>
+    {% if pour_proprietaire %}{% if r.valide_le %}<div class="petit">validée à {{ r.valide_le|time:"H:i" }}</div>{% elif not a_venir %}<div class="petit">jamais validée</div>{% endif %}{% endif %}
+  </td>
+  {% if not pour_proprietaire %}
+  <td>{% if r.annonce %}<span class="manquants">{{ r.annonce.joueurs_manquants }} manquant{{ r.annonce.joueurs_manquants|pluralize }}</span>{% else %}<span class="petit">—</span>{% endif %}</td>
+  <td class="text-end text-nowrap">
+    {% if a_venir %}
+      <a class="btn btn-fb-contour btn-sm" href="{% url 'qr_code' r.pk %}"><i class="bi bi-qr-code"></i> QR code</a>
+      {% if r.statut == "CONFIRMEE" and not r.annonce %}<a class="btn btn-fb btn-sm" href="{% url 'publier_annonce' r.pk %}"><i class="bi bi-megaphone"></i> Publier une annonce</a>{% endif %}
+    {% endif %}
+  </td>
+  {% endif %}
+</tr>

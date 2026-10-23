@@ -36,7 +36,7 @@ Règles importantes :
 ## Tests
 
 ```bash
-python manage.py test        # 69 tests
+python manage.py test        # 70 tests
 ```
 
 TS1 (SCRUM-52) `comptes/tests.py`, `terrains/tests.py` · TS2/TS3 (SCRUM-56, 58) `reservations/tests.py` · TS4 (SCRUM-61) `annonces/tests.py`, `comptes/tests.py`.

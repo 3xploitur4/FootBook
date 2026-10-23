@@ -1,25 +1,29 @@
 {% with r=annonce.reservation %}
-<div class="carte mb-3 d-flex flex-column gap-1">
-  <div class="d-flex justify-content-between align-items-center">
-    <strong>{{ r.date|date:"D j M" }} · {{ r.heure|time:"H:i" }}</strong>
+<div class="carte h-100 d-flex flex-column gap-2">
+  <div class="d-flex justify-content-between align-items-start gap-2">
+    <div class="d-flex gap-3 align-items-center">
+      <div class="date-bloc"><div class="m">{{ r.date|date:"M" }}</div><div class="d">{{ r.date|date:"j" }}</div></div>
+      <div><strong>{{ r.terrain.nom }}</strong><div class="petit">{{ r.date|date:"l" }} · {{ r.heure|time:"H:i" }} – {{ r.heure_fin|time:"H:i" }}</div></div>
+    </div>
     <span class="manquants">{{ annonce.joueurs_manquants }} manquant{{ annonce.joueurs_manquants|pluralize }}</span>
   </div>
-  <div>{{ r.terrain.nom }}</div>
   <div><span class="tag">{{ r.terrain.get_categorie_display }}</span><span class="tag">{{ r.terrain.get_zone_display }}</span></div>
-  {% if annonce.description %}<div class="petit">{{ annonce.description }}</div>{% endif %}
+  {% if annonce.description %}<div class="petit">« {{ annonce.description }} »</div>{% endif %}
   <div class="petit">Par <a href="{% url 'profil_joueur' r.joueur.pk %}">{{ r.joueur.nom_affiche }}</a>
     {% with parts=annonce.participations.all %}{% if parts %} · participants :
       {% for p in parts %}<a href="{% url 'profil_joueur' p.joueur.pk %}">{{ p.joueur.nom_affiche }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
     {% endif %}{% endwith %}
   </div>
+  <div class="mt-auto pt-1">
   {% if r.joueur_id == user.pk %}
-    <button class="btn btn-fb mt-1" disabled>Votre annonce</button>
+    <button class="btn btn-fb-contour w-100" disabled>Votre annonce</button>
   {% elif user.pk in annonce.ids_participants %}
-    <button class="btn mt-1" style="background:var(--vert-pale)" disabled>Vous participez</button>
+    <button class="btn w-100" style="background:var(--vert-pale);color:var(--vert-fonce)" disabled><i class="bi bi-check2"></i> Vous participez</button>
   {% else %}
-    <form method="post" action="{% url 'rejoindre' annonce.pk %}" class="mt-1">{% csrf_token %}
+    <form method="post" action="{% url 'rejoindre' annonce.pk %}">{% csrf_token %}
       <button type="submit" class="btn btn-fb w-100">Rejoindre</button>
     </form>
   {% endif %}
+  </div>
 </div>
 {% endwith %}

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% block titre %}Annonces ouvertes{% endblock %}
+{% block fil %}Jouer{% endblock %}
+{% block titre_page %}Annonces ouvertes{% endblock %}
+{% block actions %}<a class="btn btn-fb-contour" href="{% url 'mes_reservations' %}"><i class="bi bi-megaphone me-1"></i>Publier depuis mes réservations</a>{% endblock %}
 {% block contenu %}
-<div class="etroit">
-  <h1>Annonces ouvertes</h1>
-  <p class="petit">{{ annonces|length }} match{{ annonces|length|pluralize:"s" }} cherche{{ annonces|length|pluralize:"nt" }} des joueurs.</p>
+<p class="petit">{{ annonces|length }} match{{ annonces|length|pluralize:"s" }} cherche{{ annonces|length|pluralize:"nt" }} des joueurs. Une annonce disparaît quand l'équipe est complète ou quand le match est passé.</p>
+<div class="row g-3">
   {% for annonce in annonces %}
-    {% include "annonces/_carte.html" %}
+    <div class="col-xl-4 col-md-6">{% include "annonces/_carte.html" %}</div>
   {% empty %}
-    <div class="carte">Aucune annonce ouverte pour le moment.</div>
+    <div class="col-12"><div class="carte vide"><i class="bi bi-megaphone"></i>Aucune annonce ouverte pour le moment.</div></div>
   {% endfor %}
-  <p class="petit">Une annonce disparaît quand l'équipe est complète ou quand le match est passé.</p>
 </div>
 {% endblock %}
